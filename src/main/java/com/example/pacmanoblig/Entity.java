@@ -51,73 +51,85 @@ public class Entity extends ImageView {
                 pacmanDie = false;
             }
         }
-        else if (!pacmanDie) {
-            ventetid = 0;
 
-            // sjekker knapper og beveger pacman, bytter bilde ut ifra hvilken knapp som er trykket
-            Main.scene.setOnKeyPressed(e -> {
-                switch (e.getCode()) {
-                    case W: if (lastPressed == A) {
-                        pacman.setImage(new Image("file:src/main/java/com/example/pacmanoblig/res/pacmanUpFromLeft.gif"));
+
+        // sjekker knapper og beveger pacman, bytter bilde ut ifra hvilken knapp som er trykket
+        Main.scene.setOnKeyPressed(e -> {
+            switch (e.getCode()) {
+                case W:
+                    if (!pacmanDie) {
+                        ventetid = 0;
+                        if (lastPressed == A) {
+                            pacman.setImage(new Image("file:src/main/java/com/example/pacmanoblig/res/pacmanUpFromLeft.gif"));
                         } else {
                             pacman.setImage(new Image("file:src/main/java/com/example/pacmanoblig/res/pacmanUpFromRight.gif"));
                         }
                         pressed = W;
-                        break;
-                    case A:
+                    }
+                    break;
+                case A:
+                    if (!pacmanDie) {
+                        ventetid = 0;
                         pressed = A;
                         pacman.setImage(new Image("file:src/main/java/com/example/pacmanoblig/res/pacmanLeft.gif"));
-                        break;
-                    case S:
+                    }
+                    break;
+                case S:
+                    if (!pacmanDie) {
+                        ventetid = 0;
                         if (lastPressed == A) {
                             pacman.setImage(new Image("file:src/main/java/com/example/pacmanoblig/res/pacmanDownFromLeft.gif"));
                         } else {
                             pacman.setImage(new Image("file:src/main/java/com/example/pacmanoblig/res/pacmanDownFromRight.gif"));
                         }
                         pressed = S;
-                        break;
-                    case D:
+                    }
+                    break;
+                case D:
+                    if (!pacmanDie) {
+                        ventetid = 0;
                         pressed = D;
                         pacman.setImage(new Image("file:src/main/java/com/example/pacmanoblig/res/pacmanRight.gif"));
-                        break;
-                }
-            });
-
-            // HÅNDTERER PACMANS BEVEGELSE
-            treffVegg = false;
-            linjetreff = false;
-
-                // HÅNDTERING AV W-KNAPP
-            if (pressed == W) {
-                for (Rectangle r : veggArr) {
-                    if (getBoundsInParent().intersects(r.getBoundsInParent())) {
-                        treffVegg = true;
                     }
+                    break;
+            }
+        });
+
+        // HÅNDTERER PACMANS BEVEGELSE
+        treffVegg = false;
+        linjetreff = false;
+
+        // HÅNDTERING AV W-KNAPP
+        if (pressed == W) {
+            for (Rectangle r : veggArr) {
+                if (getBoundsInParent().intersects(r.getBoundsInParent())) {
+                    treffVegg = true;
                 }
-                // Går gjennom liste med linjer for å holde styr på posisjon
-                for (Line l : loddArr) {
-                    if (getBoundsInParent().intersects(l.getBoundsInParent())) {
-                        linjetreff = true;
-                        // Denne ifen gjør at pacman "snapper" på en ny linje dersom han er nærme nok
-                        if (((x + 20) >= (l.getStartX() - margin) && (x + 20) <= (l.getStartX() + margin))) {
-                            if (treffVegg) {
-                                setTranslateY(l.getStartY() +20 );
-                                setTranslateY(l.getStartY() - 20);
-                                pressed = null;
-                                break;
-                            } else {
-                                setTranslateX(l.getStartX() - 20);
-                                setTranslateY(y - speed);
-                                lastPressed = W;
-                            }
+            }
+            // Går gjennom liste med linjer for å holde styr på posisjon
+            for (Line l : loddArr) {
+                if (getBoundsInParent().intersects(l.getBoundsInParent())) {
+                    linjetreff = true;
+                    // Denne ifen gjør at pacman "snapper" på en ny linje dersom han er nærme nok
+                    if (((x + 20) >= (l.getStartX() - margin) && (x + 20) <= (l.getStartX() + margin))) {
+                        if (treffVegg) {
+                            setTranslateY(l.getStartY() +20 );
+                            setTranslateY(l.getStartY() - 20);
+                            pressed = null;
+                            break;
+                        } else {
+                            setTranslateX(l.getStartX() - 20);
+                            setTranslateY(y - speed);
+                            lastPressed = W;
                         }
                     }
                 }
-               if (!linjetreff) {
-                    pressed = lastPressed;
-                    vildra = W;
-                }
-               // forsøk på mer smidig bevegelse
+            }
+            if (!linjetreff) {
+                pressed = lastPressed;
+                vildra = W;
+            }
+            // forsøk på mer smidig bevegelse
                /* if (vildra == A || vildra == D) {
                     for (Line l : vannArr) {
                         if (getBoundsInParent().intersects(l.getBoundsInParent())) {
@@ -129,35 +141,35 @@ public class Entity extends ImageView {
                     }
                 }*/
 
-                // HÅNDTERING AV A-KNAPPEN
+            // HÅNDTERING AV A-KNAPPEN
 
-            } else if (pressed == A) {
-                for (Rectangle r : veggArr) {
-                    if (getBoundsInParent().intersects(r.getBoundsInParent())) {
-                        treffVegg = true;
-                    }
+        } else if (pressed == A) {
+            for (Rectangle r : veggArr) {
+                if (getBoundsInParent().intersects(r.getBoundsInParent())) {
+                    treffVegg = true;
                 }
-                for (Line l : vannArr) {
-                    if (getBoundsInParent().intersects(l.getBoundsInParent())) {
-                        linjetreff = true;
-                        if (((y + 20) >= (l.getStartY() - margin) && (y + 20) <= (l.getStartY() + margin))) {
-                            if (treffVegg) {
-                                setTranslateX(l.getStartX() - 20);
-                                setTranslateY(l.getStartY() - 20);
-                                pressed = null;
-                                break;
-                            } else {
-                                setTranslateY(l.getStartY() - 20);
-                                setTranslateX(x - speed);
-                                lastPressed = A;
-                            }
+            }
+            for (Line l : vannArr) {
+                if (getBoundsInParent().intersects(l.getBoundsInParent())) {
+                    linjetreff = true;
+                    if (((y + 20) >= (l.getStartY() - margin) && (y + 20) <= (l.getStartY() + margin))) {
+                        if (treffVegg) {
+                            setTranslateX(l.getStartX() - 20);
+                            setTranslateY(l.getStartY() - 20);
+                            pressed = null;
+                            break;
+                        } else {
+                            setTranslateY(l.getStartY() - 20);
+                            setTranslateX(x - speed);
+                            lastPressed = A;
                         }
                     }
                 }
-                if (!linjetreff) {
-                    pressed = lastPressed;
-                    vildra = A;
-                }
+            }
+            if (!linjetreff) {
+                pressed = lastPressed;
+                vildra = A;
+            }
                /* if (vildra == W || vildra == S) {
                     for (Line l : loddArr) {
                         if (getBoundsInParent().intersects(l.getBoundsInParent())) {
@@ -169,35 +181,35 @@ public class Entity extends ImageView {
                     }
                 }*/
 
-                // HÅNDTERING AV S-KNAPPEN
+            // HÅNDTERING AV S-KNAPPEN
 
-            } else if (pressed == S) {
-                for (Rectangle r : veggArr) {
-                    if (getBoundsInParent().intersects(r.getBoundsInParent())) {
-                        treffVegg = true;
-                    }
+        } else if (pressed == S) {
+            for (Rectangle r : veggArr) {
+                if (getBoundsInParent().intersects(r.getBoundsInParent())) {
+                    treffVegg = true;
                 }
-                for (Line l : loddArr) {
-                    if (getBoundsInParent().intersects(l.getBoundsInParent())) {
-                        linjetreff = true;
-                        if (((x + 20) >= (l.getStartX() - margin) && (x + 20) <= (l.getStartX() + margin))) {
-                            if (treffVegg) {
-                                setTranslateY(l.getEndY() - 20);
-                                setTranslateX(l.getStartX() - 20);
-                                pressed = null;
-                                break;
-                            } else {
-                                setTranslateX(l.getStartX() - 20);
-                                setTranslateY(y + speed);
-                                lastPressed = S;
-                            }
+            }
+            for (Line l : loddArr) {
+                if (getBoundsInParent().intersects(l.getBoundsInParent())) {
+                    linjetreff = true;
+                    if (((x + 20) >= (l.getStartX() - margin) && (x + 20) <= (l.getStartX() + margin))) {
+                        if (treffVegg) {
+                            setTranslateY(l.getEndY() - 20);
+                            setTranslateX(l.getStartX() - 20);
+                            pressed = null;
+                            break;
+                        } else {
+                            setTranslateX(l.getStartX() - 20);
+                            setTranslateY(y + speed);
+                            lastPressed = S;
                         }
                     }
                 }
-                if (!linjetreff) {
-                    pressed = lastPressed;
-                    vildra = S;
-                }
+            }
+            if (!linjetreff) {
+                pressed = lastPressed;
+                vildra = S;
+            }
                /* if (vildra == A || vildra == D) {
                     for (Line l : vannArr) {
                         if (getBoundsInParent().intersects(l.getBoundsInParent())) {
@@ -209,34 +221,34 @@ public class Entity extends ImageView {
                     }
                 }*/
 
-                // HÅNDTERING AV D-KNAPPEN
+            // HÅNDTERING AV D-KNAPPEN
 
-            } else if (pressed == D) {
-                for (Rectangle r : veggArr) {
-                    if (getBoundsInParent().intersects(r.getBoundsInParent())) {
-                        treffVegg = true;
-                    }
+        } else if (pressed == D) {
+            for (Rectangle r : veggArr) {
+                if (getBoundsInParent().intersects(r.getBoundsInParent())) {
+                    treffVegg = true;
                 }
-                for (Line l : vannArr) {
-                    if (getBoundsInParent().intersects(l.getBoundsInParent())) {
-                        linjetreff = true;
-                        if (((y + 20) >= (l.getStartY() - margin) && (y + 20) <= (l.getStartY() + margin))) {
-                            if (treffVegg) {
-                                setTranslateX(l.getEndX() - 20);
-                                pressed = null;
-                                break;
-                            } else {
-                                setTranslateY(l.getStartY() - 20);
-                                setTranslateX(x + speed);
-                                lastPressed = D;
-                            }
+            }
+            for (Line l : vannArr) {
+                if (getBoundsInParent().intersects(l.getBoundsInParent())) {
+                    linjetreff = true;
+                    if (((y + 20) >= (l.getStartY() - margin) && (y + 20) <= (l.getStartY() + margin))) {
+                        if (treffVegg) {
+                            setTranslateX(l.getEndX() - 20);
+                            pressed = null;
+                            break;
+                        } else {
+                            setTranslateY(l.getStartY() - 20);
+                            setTranslateX(x + speed);
+                            lastPressed = D;
                         }
                     }
                 }
-                if (!linjetreff) {
-                    pressed = lastPressed;
-                    vildra = D;
-                }
+            }
+            if (!linjetreff) {
+                pressed = lastPressed;
+                vildra = D;
+            }
                 /*if (vildra == W || vildra == S) {
                     for (Line l : loddArr) {
                         if (getBoundsInParent().intersects(l.getBoundsInParent())) {
@@ -247,30 +259,29 @@ public class Entity extends ImageView {
                         }
                     }
                 }*/
+        }
+
+        // Kollisjon med mat og oppdatering av score, og fjerning av mat
+        try {
+            for (Circle mat : matArr) {
+                if (getBoundsInParent().intersects(mat.getBoundsInParent())) {
+                    score++;
+                    Main.pane.getChildren().remove(mat);
+                    matArr.remove(mat);
+                    poeng.setText("score:   " + Entity.score);
+                }
             }
+        } catch (Exception e) {}
 
-            // Kollisjon med mat og oppdatering av score, og fjerning av mat
-            try {
-                for (Circle mat : matArr) {
-                    if (getBoundsInParent().intersects(mat.getBoundsInParent())) {
-                        score++;
-                        Main.pane.getChildren().remove(mat);
-                        matArr.remove(mat);
-                        poeng.setText("score:   " + Entity.score);
-                    }
-                }
-            } catch (Exception e) {}
-
-            // Kollisjon med spøkelse, setter pacman tilbake til startpunkt og setter pacman til død
-            // Måtte bruke try catch fordi den kastet en ConcurrentModificationException kontinuerlig
-            for (Group g : ghostArr) {
-                if (getBoundsInParent().intersects(g.getBoundsInParent())) {
-                    pressed = null;
-                    pacmanDie = true;
-                    pacman.setImage(new Image("file:src/main/java/com/example/pacmanoblig/res/pacmanDie.gif"));
-                    setTranslateX(330);
-                    setTranslateY(255);
-                }
+        // Kollisjon med spøkelse, setter pacman tilbake til startpunkt og setter pacman til død
+        // Måtte bruke try catch fordi den kastet en ConcurrentModificationException kontinuerlig
+        for (Group g : ghostArr) {
+            if (getBoundsInParent().intersects(g.getBoundsInParent())) {
+                pressed = null;
+                pacmanDie = true;
+                pacman.setImage(new Image("file:src/main/java/com/example/pacmanoblig/res/pacmanDie.gif"));
+                setTranslateX(330);
+                setTranslateY(255);
             }
         }
     }
